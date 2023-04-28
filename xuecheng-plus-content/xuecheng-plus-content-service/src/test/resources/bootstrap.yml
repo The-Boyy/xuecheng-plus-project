@@ -1,0 +1,25 @@
+#微服务配置
+spring:
+  application:
+    name: content-service
+  cloud:
+    nacos:
+      server-addr: 43.142.93.94:8848
+      discovery:
+        namespace: dev
+        group: xuecheng-plus-project
+      config:
+        namespace: dev
+        group: xuecheng-plus-project
+        file-extension: yaml
+        refresh-enabled: true
+        shared-configs:
+          - data-id: feign-${spring.profiles.active}.yaml
+            group: xuecheng-plus-common
+            refresh: true
+  profiles:
+    active: dev
+
+# 日志文件配置路径
+logging:
+  config: classpath:log4j2-dev.xml

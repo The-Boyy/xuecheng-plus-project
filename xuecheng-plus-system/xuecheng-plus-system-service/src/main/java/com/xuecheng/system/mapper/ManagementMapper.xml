@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuecheng.system.mapper.ManagementMapper">
+    
+    <resultMap id="treeMap" type="com.xuecheng.system.model.dto.ManagementDto">
+
+        <id column="m1_id" property="id"/>
+        <result column="m1_name" property="name"/>
+        <result column="m1_parentId" property="parentId"/>
+        <result column="m1_grade" property="grade"/>
+        <result column="m1_createDate" property="createDate"/>
+        <result column="m1_updateDate" property="updateDate"/>
+        <result column="m1_status" property="status"/>
+        <result column="m1_path" property="path"/>
+        <result column="m1_description" property="description"/>
+        <collection property="managementList" ofType="com.xuecheng.system.model.po.Management">
+            <id column="m2_id" property="id"/>
+            <result column="m2_name" property="name"/>
+            <result column="m2_parentId" property="parentId"/>
+            <result column="m2_grade" property="grade"/>
+            <result column="m2_createDate" property="createDate"/>
+            <result column="m2_updateDate" property="updateDate"/>
+            <result column="m2_status" property="status"/>
+            <result column="m2_path" property="path"/>
+            <result column="m2_description" property="description"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryAll" resultMap="treeMap">
+        select
+            m1.id m1_id,
+            m1.name m1_name,
+            m1.parent_id m1_parentId,
+            m1.grade m1_grade,
+            m1.create_date m1_createDate,
+            m1.update_date m1_updateDate,
+            m1.status m1_status,
+            m1.path m1_path,
+            m1.description m1_description,
+            m2.id m2_id,
+            m2.name m2_name,
+            m2.parent_id m2_parentId,
+            m2.grade m2_grade,
+            m2.create_date m2_createDate,
+            m2.update_date m2_updateDate,
+            m2.status m2_status,
+            m2.path m2_path,
+            m2.description m2_description
+        from management m1
+        left join management m2 on m2.parent_id = m1.id
+        where m1.parent_id = 0
+        order by m1.id, m2.id
+    </select>
+</mapper>

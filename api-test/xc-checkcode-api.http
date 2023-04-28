@@ -1,0 +1,12 @@
+
+### 申请验证码
+POST {{checkcode_host}}/checkcode/pic
+
+### 申请验证码_d
+POST {{checkcode_host}}/checkcode/picture
+
+### 校验验证码
+POST {{checkcode_host}}/checkcode/verify?key=checkcode:50f0cf16410240c593b1d706bea4af99&code=JN0k
+
+### 申请验证码
+POST http://362b6e78.r8.cpolar.top/checkcode/pic
