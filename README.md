@@ -1,39 +1,23 @@
-# xuecheng-plus-project
+# HDU学成归来
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+#### 关于HDU学成归来
++ HDU学成归来是一个以在线教育为基础的web网站项目。项目包含学生学习端、机构教学端、运营后台管理端。
++ 学生可以在网站浏览机构发布课程并选择性购买与上课。机构可以发布课程与分配师资。后台管理端可以对用户、课程、财务、媒资等进行统一管理与授权。
++ 后台管理端的前端由同学协作开发。学生端以及机构端前端页面使用在线课程提供的代码。
++ 项目仍处于优化，完善页面功能以及开发新功能中。
 
-#### 软件架构
-软件架构说明
+#### 项目框架
++ 项目使用Spring框架开发完成。包括SpringBoot、SpringSecurity、SpringCloud。
++ 此外，使用的其它框架及中间件包括：MybatisPlus、Nacos、Feign、RabbitMQ、Redis、xxl-job、Gateway、minio、ElasticSearch等。
++ 项目使用腾讯云部署。Docker作为容器环境，Nginx部署前端以及反向代理。
 
 
-#### 安装教程
+#### 代码说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
++ 目前上传为后端部分，不包含数据库表以及Nacos配置中心中的配置文件，不包含前端页面代码。后续修改完页面陆续上传。
 
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
 
 #### 参与贡献
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
++ 黑马程序员-学成在线
++ 同学汪炜杰
