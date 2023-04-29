@@ -1,6 +1,6 @@
 spring:
   application:
-    name: user-api
+    name: system-api
   cloud:
     nacos:
       server-addr: 43.142.93.94:8848
@@ -13,21 +13,8 @@ spring:
         file-extension: yaml
         refresh-enabled: true
         extension-configs:
-          - data-id: user-service-${spring.profiles.active}.yaml
+          - data-id: system-service-${spring.profiles.active}.yaml
             group: xuecheng-plus-project
-            refresh: true
-        shared-configs:
-          - data-id: swagger-${spring.profiles.active}.yaml
-            group: xuecheng-plus-common
-            refresh: true
-          - data-id: feign-${spring.profiles.active}.yaml
-            group: xuecheng-plus-common
-            refresh: true
-          - data-id: redis-${spring.profiles.active}.yaml
-            group: xuecheng-plus-common
-            refresh: true
-          - data-id: rabbitmq-${spring.profiles.active}.yaml
-            group: xuecheng-plus-common
             refresh: true
 
   profiles:
