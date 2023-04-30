@@ -14,8 +14,11 @@
 
 #### 代码说明
 
-+ 目前上传为后端部分，不包含数据库表以及Nacos配置中心中的配置文件，不包含前端页面代码。后续修改完页面陆续上传。
-
++ 目前上传后端部分，不包含数据库表以及Nacos配置中心中的配置文件。后续修改完页面陆续上传。
++ 后端：https://github.com/The-Boyy/xuecheng-plus-project.git
++ 门户端：https://github.com/The-Boyy/xuecheng-plus-portal.git
++ 机构端：https://github.com/The-Boyy/xuechengback.git
++ 运营端：待上传
 
 #### 参与贡献
 
