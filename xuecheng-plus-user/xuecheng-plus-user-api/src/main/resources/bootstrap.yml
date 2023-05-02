@@ -1,19 +1,19 @@
 spring:
   application:
-    name: system-api
+    name: user-api
   cloud:
     nacos:
       server-addr: 43.142.93.94:8848
       discovery:
-        namespace: dev
+        namespace: 885a5dae-c75f-4249-84c8-c585c73e204b
         group: xuecheng-plus-project
       config:
-        namespace: dev
+        namespace: 885a5dae-c75f-4249-84c8-c585c73e204b
         group: xuecheng-plus-project
         file-extension: yaml
         refresh-enabled: true
         extension-configs:
-          - data-id: system-service-${spring.profiles.active}.yaml
+          - data-id: user-service-${spring.profiles.active}.yaml
             group: xuecheng-plus-project
             refresh: true
 
