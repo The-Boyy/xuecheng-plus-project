@@ -1,3 +1,6 @@
 
 ### 测试queryall
 GET {{system_host}}/system/management/all
+
+### 测试queryLogs
+GET {{system_host}}/system/dictionary/log/all

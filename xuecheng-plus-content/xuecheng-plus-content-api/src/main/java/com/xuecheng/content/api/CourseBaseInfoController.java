@@ -1,5 +1,7 @@
 package com.xuecheng.content.api;
 import com.xuecheng.base.exception.XueChengPlusException;
+import com.xuecheng.base.model.ResultResponse;
+import com.xuecheng.content.model.dto.*;
 import com.xuecheng.content.util.SecurityUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,12 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import com.xuecheng.base.exception.ValidationGroups;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
-import com.xuecheng.content.model.dto.AddCourseDto;
-import com.xuecheng.content.model.dto.CourseBaseInfoDto;
-import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.service.CourseBaseInfoService;
-import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
+
+import java.util.List;
 
 @Api(value = "课程信息管理接口", tags = "课程信息管理接口")
 @RestController//@Controller和@RespondBody
@@ -93,5 +93,10 @@ public class CourseBaseInfoController {
     @GetMapping("/hello")
     public String hello(){
         return "hello world";
+    }
+
+    @GetMapping("/course/categoryWithCount")
+    public ResultResponse<List<CategoryWithCountDto>> queryCategoryWithCount(){
+        return courseBaseInfoService.queryCategoryWithCount();
     }
 }

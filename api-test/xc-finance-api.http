@@ -1,3 +1,12 @@
 
 ### hello测试
 GET {{finance_host}}/finance/hello
+
+### 测试查询账单
+GET {{finance_host}}/finance/financeMonth
+
+### 测试查询余额
+GET {{finance_host}}/finance/moneyMonth
+
+### 测试查询账单/30日周期
+GET {{finance_host}}/finance/financeDay

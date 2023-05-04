@@ -1,5 +1,6 @@
 package com.xuecheng.finance.model.po;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.ToString;
 
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @ToString
+@TableName("finance")
 public class Finance {
 
     private Long id;
@@ -17,4 +19,5 @@ public class Finance {
     private String description;
     private String code;
     private Long courseId;
+    private Integer direction;
 }

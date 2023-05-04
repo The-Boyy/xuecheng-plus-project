@@ -5,13 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
+import com.xuecheng.base.model.ResultResponse;
 import com.xuecheng.content.mapper.CourseBaseMapper;
 import com.xuecheng.content.mapper.CourseCategoryMapper;
 import com.xuecheng.content.mapper.CourseMarketMapper;
-import com.xuecheng.content.model.dto.AddCourseDto;
-import com.xuecheng.content.model.dto.CourseBaseInfoDto;
-import com.xuecheng.content.model.dto.EditCourseDto;
-import com.xuecheng.content.model.dto.QueryCourseParamsDto;
+import com.xuecheng.content.model.dto.*;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.model.po.CourseCategory;
 import com.xuecheng.content.model.po.CourseMarket;
@@ -28,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -257,6 +256,18 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         courseBaseMapper.updateById(courseBase);
 
         coursePublishService.deleteCoursePublishById(courseId);
+    }
+
+    @Override
+    public ResultResponse<List<CategoryWithCountDto>> queryCategoryWithCount() {
+
+        List<CategoryWithCountDto> categoryWithCountDtoList = courseBaseMapper.queryCategoryWithCount();
+
+        ResultResponse<List<CategoryWithCountDto>> response = new ResultResponse<>();
+
+        response.setData(categoryWithCountDtoList);
+        response.setCode(200);
+        return response;
     }
 
     //单独写一个方法保存营销信息，逻辑：存在则更新，不存在则添加

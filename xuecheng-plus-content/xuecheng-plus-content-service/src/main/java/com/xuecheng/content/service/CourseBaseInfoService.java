@@ -2,11 +2,11 @@ package com.xuecheng.content.service;
 
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
-import com.xuecheng.content.model.dto.AddCourseDto;
-import com.xuecheng.content.model.dto.CourseBaseInfoDto;
-import com.xuecheng.content.model.dto.EditCourseDto;
-import com.xuecheng.content.model.dto.QueryCourseParamsDto;
+import com.xuecheng.base.model.ResultResponse;
+import com.xuecheng.content.model.dto.*;
 import com.xuecheng.content.model.po.CourseBase;
+
+import java.util.List;
 
 /**
  * @author Mr.M
@@ -52,4 +52,5 @@ public interface CourseBaseInfoService {
 
     public void offlineCourseById(Long courseId);
 
+    ResultResponse<List<CategoryWithCountDto>> queryCategoryWithCount();
 }

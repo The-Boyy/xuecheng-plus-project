@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@MapperScan("com.xuecheng.user.mapper")
+@MapperScan("com.xuecheng.finance.mapper")
 public class MybatisPlusConfig {
     /**
      * 定义分页拦截器

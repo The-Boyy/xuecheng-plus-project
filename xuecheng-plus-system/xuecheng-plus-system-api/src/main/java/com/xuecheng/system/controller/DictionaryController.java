@@ -1,5 +1,7 @@
 package com.xuecheng.system.controller;
 
+import com.xuecheng.base.model.ResultResponse;
+import com.xuecheng.system.model.dto.XcLogDto;
 import com.xuecheng.system.model.po.Dictionary;
 import com.xuecheng.system.service.DictionaryService;
 import lombok.extern.slf4j.Slf4j;
@@ -32,5 +34,10 @@ public class DictionaryController  {
     @GetMapping("/dictionary/code/{code}")
     public Dictionary getByCode(@PathVariable String code) {
         return dictionaryService.getByCode(code);
+    }
+
+    @GetMapping("/dictionary/log/all")
+    public ResultResponse<List<XcLogDto>> queryLogs(){
+        return dictionaryService.queryLogs();
     }
 }

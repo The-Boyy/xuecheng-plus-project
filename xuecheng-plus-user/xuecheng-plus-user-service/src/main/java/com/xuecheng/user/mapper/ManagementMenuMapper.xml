@@ -13,6 +13,7 @@
         <result column="m1_status" property="status"/>
         <result column="m1_path" property="path"/>
         <result column="m1_description" property="description"/>
+        <result column="m1_icon" property="icon"/>
         <collection property="managementList" ofType="com.xuecheng.user.model.po.Management">
             <id column="m2_id" property="id"/>
             <result column="m2_name" property="name"/>
@@ -23,6 +24,7 @@
             <result column="m2_status" property="status"/>
             <result column="m2_path" property="path"/>
             <result column="m2_description" property="description"/>
+            <result column="m2_icon" property="icon"/>
         </collection>
     </resultMap>
 
@@ -37,6 +39,7 @@
             m1.status m1_status,
             m1.path m1_path,
             m1.description m1_description,
+            m1.icon m1_icon,
             m2.id m2_id,
             m2.name m2_name,
             m2.parent_id m2_parentId,
@@ -45,7 +48,8 @@
             m2.update_date m2_updateDate,
             m2.status m2_status,
             m2.path m2_path,
-            m2.description m2_description
+            m2.description m2_description,
+            m2.icon m2_icon
         from management m1
                  left join management m2 on m2.parent_id = m1.id
         where m1.parent_id = 0 and (m1.id and m2.id

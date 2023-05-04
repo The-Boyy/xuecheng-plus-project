@@ -30,4 +30,6 @@ public class Management implements Serializable {
     private String path;
 
     private String description;
+
+    private String icon;
 }

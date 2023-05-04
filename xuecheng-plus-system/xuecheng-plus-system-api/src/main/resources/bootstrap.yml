@@ -18,7 +18,7 @@ spring:
         file-extension: yaml
         refresh-enabled: true
         extension-configs:
-          - data-id: user-service-${spring.profiles.active}.yaml
+          - data-id: system-service-${spring.profiles.active}.yaml
             group: xuecheng-plus-project
             refresh: true
         shared-configs:

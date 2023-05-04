@@ -17,3 +17,6 @@ GET {{content_host}}/content/hello
 
 ### 测试category
 GET {{content_host}}/content/course-category/tree-nodes
+
+### 测试categoryWithCount
+GET {{content_host}}/content/course/categoryWithCount

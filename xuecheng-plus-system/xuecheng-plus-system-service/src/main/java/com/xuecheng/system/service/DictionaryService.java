@@ -1,6 +1,8 @@
 package com.xuecheng.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xuecheng.base.model.ResultResponse;
+import com.xuecheng.system.model.dto.XcLogDto;
 import com.xuecheng.system.model.po.Dictionary;
 
 import java.util.List;
@@ -27,4 +29,6 @@ public interface DictionaryService extends IService<Dictionary> {
      * @return
      */
     Dictionary getByCode(String code);
+
+    ResultResponse<List<XcLogDto>> queryLogs();
 }
