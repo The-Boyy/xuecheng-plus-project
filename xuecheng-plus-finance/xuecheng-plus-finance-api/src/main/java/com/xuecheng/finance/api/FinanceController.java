@@ -3,6 +3,7 @@ package com.xuecheng.finance.api;
 import com.xuecheng.base.model.ResultResponse;
 import com.xuecheng.finance.model.dto.FinanceDayDto;
 import com.xuecheng.finance.model.dto.FinanceMonthDto;
+import com.xuecheng.finance.model.dto.FinanceTwoMonthDto;
 import com.xuecheng.finance.model.dto.MoneyMonthDto;
 import com.xuecheng.finance.service.FinanceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +35,10 @@ public class FinanceController {
     @GetMapping("/moneyMonth")
     public ResultResponse<List<MoneyMonthDto>> queryMoneyMonth(){
         return financeService.queryMoneyMonth();
+    }
+
+    @GetMapping("/financeTwoMonth")
+    public ResultResponse<FinanceTwoMonthDto> queryTwoMonth(){
+        return financeService.queryTwoMonth();
     }
 }

@@ -1,5 +1,7 @@
 package com.xuecheng.content.api;
 
+import com.xuecheng.base.model.ResultResponse;
+import com.xuecheng.content.model.dto.CompareWithLastYear;
 import com.xuecheng.content.model.dto.CoursePreviewDto;
 import com.xuecheng.content.model.po.CoursePublish;
 import com.xuecheng.content.service.CoursePublishService;
@@ -57,6 +59,12 @@ public class CoursePublishController {
     public CoursePublish getCoursepublish(@PathVariable("courseId") Long courseId) {
 //        return coursePublishService.getCoursePublish(courseId);
         return coursePublishService.getCoursePublishCache(courseId);
+    }
+
+    @GetMapping("/publish/compareWithLastYear")
+    @ResponseBody
+    public ResultResponse<CompareWithLastYear> compare(){
+        return coursePublishService.compareWithLastYear();
     }
 
 }

@@ -1,8 +1,10 @@
 package com.xuecheng.content.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xuecheng.base.exception.CommonError;
 import com.xuecheng.base.exception.XueChengPlusException;
+import com.xuecheng.base.model.ResultResponse;
 import com.xuecheng.content.config.CourseNotifyConfig;
 import com.xuecheng.content.config.MultipartSupportConfig;
 import com.xuecheng.content.feignclient.MediaServiceClient;
@@ -10,6 +12,7 @@ import com.xuecheng.content.mapper.CourseBaseMapper;
 import com.xuecheng.content.mapper.CourseMarketMapper;
 import com.xuecheng.content.mapper.CoursePublishMapper;
 import com.xuecheng.content.mapper.CoursePublishPreMapper;
+import com.xuecheng.content.model.dto.CompareWithLastYear;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.CoursePreviewDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
@@ -50,6 +53,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -293,6 +297,39 @@ public class CoursePublishServiceImpl implements CoursePublishService {
         if(deleteById <= 0){
             XueChengPlusException.cast("删除课程发布信息失败");
         }
+    }
+
+    @Override
+    public ResultResponse<CompareWithLastYear> compareWithLastYear() {
+        LambdaQueryWrapper<CoursePublish> wrapper = new LambdaQueryWrapper<CoursePublish>().orderByDesc(CoursePublish::getCreateDate);
+
+        List<CoursePublish> coursePublishes = coursePublishMapper.selectList(wrapper);
+
+        Map<Integer, Integer> map = new HashMap<>();
+
+        int year = LocalDateTime.now().getYear();
+        map.put(year, 0);
+        map.put(year - 1, 0);
+
+        for (CoursePublish coursePublish : coursePublishes) {
+            int y = coursePublish.getCreateDate().getYear();
+            if(map.containsKey(y)){
+                map.put(y, map.get(y) + 1);
+            }else {
+                break;
+            }
+        }
+
+        CompareWithLastYear compareWithLastYear = new CompareWithLastYear();
+        compareWithLastYear.setDate(year + "年");
+
+        Integer curNum = map.get(year);
+        Integer lastNum = map.get(year - 1);
+        compareWithLastYear.setFlag(curNum >= lastNum);
+
+        compareWithLastYear.setRate((curNum - lastNum) / (lastNum + 0.000001) * 100);
+
+        return ResultResponse.success(200, compareWithLastYear);
     }
 
     private void saveCoursePublishMessage(Long courseId) {

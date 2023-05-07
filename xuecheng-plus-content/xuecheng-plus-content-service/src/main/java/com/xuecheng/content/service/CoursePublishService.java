@@ -1,5 +1,7 @@
 package com.xuecheng.content.service;
 
+import com.xuecheng.base.model.ResultResponse;
+import com.xuecheng.content.model.dto.CompareWithLastYear;
 import com.xuecheng.content.model.dto.CoursePreviewDto;
 import com.xuecheng.content.model.po.CoursePublish;
 
@@ -48,4 +50,6 @@ public interface CoursePublishService {
     public CoursePublish getCoursePublishCache(Long courseId);
 
     public void deleteCoursePublishById(Long courseId);
+
+    ResultResponse<CompareWithLastYear> compareWithLastYear();
 }

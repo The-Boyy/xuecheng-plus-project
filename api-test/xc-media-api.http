@@ -1,0 +1,3 @@
+
+### 媒资文件增长率
+GET {{media_host}}/media/file/compareWithLastYear

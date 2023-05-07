@@ -53,4 +53,6 @@ public interface CourseBaseInfoService {
     public void offlineCourseById(Long courseId);
 
     ResultResponse<List<CategoryWithCountDto>> queryCategoryWithCount();
+
+    ResultResponse<CompareWithLastYear> compareWithLastYear();
 }

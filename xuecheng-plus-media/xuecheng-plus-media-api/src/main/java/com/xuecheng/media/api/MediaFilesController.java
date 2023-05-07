@@ -1,5 +1,8 @@
 package com.xuecheng.media.api;
 
+import com.baomidou.mybatisplus.extension.api.R;
+import com.xuecheng.base.model.ResultResponse;
+import com.xuecheng.media.model.dto.CompareWithLastYear;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
@@ -67,4 +70,8 @@ public class MediaFilesController {
     }
 
 
+    @GetMapping("/file/compareWithLastYear")
+    public ResultResponse<CompareWithLastYear> compareWithLastYear(){
+        return mediaFileService.compareWithLastYear();
+    }
 }

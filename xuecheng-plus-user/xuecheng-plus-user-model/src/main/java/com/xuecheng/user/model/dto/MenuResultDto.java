@@ -11,7 +11,7 @@ public class MenuResultDto {
 
     private List<ManagementDto> managementDtoList;
 
-    private List<RouterDto> routerList;
+    private RouterReturnDto routerReturnDto;
 
     private XcUserDto xcUserDto;
 }

@@ -10,3 +10,6 @@ GET {{finance_host}}/finance/moneyMonth
 
 ### 测试查询账单/30日周期
 GET {{finance_host}}/finance/financeDay
+
+### 测试查询账单/较上月同比增长
+GET {{finance_host}}/finance/financeTwoMonth

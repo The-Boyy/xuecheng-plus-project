@@ -9,6 +9,7 @@ import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xuecheng.base.exception.XueChengPlusException;
+import com.xuecheng.base.model.ResultResponse;
 import com.xuecheng.base.utils.IdWorkerUtils;
 import com.xuecheng.base.utils.QRCodeUtil;
 import com.xuecheng.messagesdk.model.po.MqMessage;
@@ -19,6 +20,7 @@ import com.xuecheng.orders.mapper.XcOrdersGoodsMapper;
 import com.xuecheng.orders.mapper.XcOrdersMapper;
 import com.xuecheng.orders.mapper.XcPayRecordMapper;
 import com.xuecheng.orders.model.dto.AddOrderDto;
+import com.xuecheng.orders.model.dto.CompareWithLastYear;
 import com.xuecheng.orders.model.dto.PayRecordDto;
 import com.xuecheng.orders.model.dto.PayStatusDto;
 import com.xuecheng.orders.model.po.XcOrders;
@@ -40,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -279,6 +282,39 @@ public class OrderServiceImpl implements OrderService {
         });
         //发送消息
         rabbitTemplate.convertAndSend(PayNotifyConfig.PAY_NOTIFY_EXCHANGE, PayNotifyConfig.PAY_PROCESS_FAIL_KEY, messageObj, correlationData);
+    }
+
+    @Override
+    public ResultResponse<CompareWithLastYear> compareWithLastYear() {
+        LambdaQueryWrapper<XcOrders> wrapper = new LambdaQueryWrapper<XcOrders>().orderByDesc(XcOrders::getCreateDate);
+
+        List<XcOrders> xcOrders = xcOrdersMapper.selectList(wrapper);
+
+        Map<Integer, Integer> map = new HashMap<>();
+
+        int year = LocalDateTime.now().getYear();
+        map.put(year, 0);
+        map.put(year - 1, 0);
+
+        for (XcOrders order : xcOrders) {
+            int y = order.getCreateDate().getYear();
+            if(map.containsKey(y)){
+                map.put(y, map.get(y) + 1);
+            }else {
+                break;
+            }
+        }
+
+        CompareWithLastYear compareWithLastYear = new CompareWithLastYear();
+        compareWithLastYear.setDate(year + "年");
+
+        Integer curNum = map.get(year);
+        Integer lastNum = map.get(year - 1);
+        compareWithLastYear.setFlag(curNum >= lastNum);
+
+        compareWithLastYear.setRate((curNum - lastNum) / (lastNum + 0.000001) * 100);
+
+        return ResultResponse.success(200, compareWithLastYear);
     }
 
 

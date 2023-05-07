@@ -99,4 +99,9 @@ public class CourseBaseInfoController {
     public ResultResponse<List<CategoryWithCountDto>> queryCategoryWithCount(){
         return courseBaseInfoService.queryCategoryWithCount();
     }
+
+    @GetMapping("course/compareWithLastYear")
+    public ResultResponse<CompareWithLastYear> compareWithLastYear(){
+        return courseBaseInfoService.compareWithLastYear();
+    }
 }

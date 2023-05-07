@@ -27,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Mr.M
@@ -268,6 +270,40 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         response.setData(categoryWithCountDtoList);
         response.setCode(200);
         return response;
+    }
+
+    @Override
+    public ResultResponse<CompareWithLastYear> compareWithLastYear() {
+
+        LambdaQueryWrapper<CourseBase> wrapper = new LambdaQueryWrapper<CourseBase>().orderByDesc(CourseBase::getCreateDate);
+
+        List<CourseBase> courseBases = courseBaseMapper.selectList(wrapper);
+
+        Map<Integer, Integer> map = new HashMap<>();
+
+        int year = LocalDateTime.now().getYear();
+        map.put(year, 0);
+        map.put(year - 1, 0);
+
+        for (CourseBase courseBase : courseBases) {
+            int y = courseBase.getCreateDate().getYear();
+            if(map.containsKey(y)){
+                map.put(y, map.get(y) + 1);
+            }else {
+                break;
+            }
+        }
+
+        CompareWithLastYear compareWithLastYear = new CompareWithLastYear();
+        compareWithLastYear.setDate(year + "年");
+
+        Integer curNum = map.get(year);
+        Integer lastNum = map.get(year - 1);
+        compareWithLastYear.setFlag(curNum >= lastNum);
+
+        compareWithLastYear.setRate((curNum - lastNum) / (lastNum + 0.000001) * 100);
+
+        return ResultResponse.success(200, compareWithLastYear);
     }
 
     //单独写一个方法保存营销信息，逻辑：存在则更新，不存在则添加

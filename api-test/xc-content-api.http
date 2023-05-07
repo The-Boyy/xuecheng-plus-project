@@ -20,3 +20,12 @@ GET {{content_host}}/content/course-category/tree-nodes
 
 ### 测试categoryWithCount
 GET {{content_host}}/content/course/categoryWithCount
+
+### 课程增长率
+GET {{content_host}}/content/course/compareWithLastYear
+
+### 课程发布量增长率
+GET {{content_host}}/content/publish/compareWithLastYear
+
+### 教师人数增长率/年
+GET {{content_host}}/content/teacher/compareWithLastYear

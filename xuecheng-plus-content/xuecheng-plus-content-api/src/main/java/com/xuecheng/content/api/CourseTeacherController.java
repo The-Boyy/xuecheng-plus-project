@@ -1,6 +1,8 @@
 package com.xuecheng.content.api;
 
+import com.xuecheng.base.model.ResultResponse;
 import com.xuecheng.content.model.dto.AddCourseTeacherDto;
+import com.xuecheng.content.model.dto.CompareWithLastYear;
 import com.xuecheng.content.model.dto.CourseTeacherDto;
 import com.xuecheng.content.service.CourseTeacherService;
 import io.swagger.annotations.Api;
@@ -44,5 +46,10 @@ public class CourseTeacherController {
     public void editCourseTeacher(@PathVariable Long courseId, @PathVariable Long id){
 
         courseTeacherService.deleteCourseTeacher(courseId, id);
+    }
+
+    @GetMapping("/teacher/compareWithLastYear")
+    public ResultResponse<CompareWithLastYear> compare(){
+        return courseTeacherService.compareWithLastYear();
     }
 }

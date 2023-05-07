@@ -1,6 +1,8 @@
 package com.xuecheng.media.service;
 
 import com.xuecheng.base.model.RestResponse;
+import com.xuecheng.base.model.ResultResponse;
+import com.xuecheng.media.model.dto.CompareWithLastYear;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
@@ -81,4 +83,5 @@ public interface MediaFileService {
      */
     public RestResponse mergechunks(Long companyId, String fileMd5, int chunkTotal, UploadFileParamsDto uploadFileParamsDto);
 
+    ResultResponse<CompareWithLastYear> compareWithLastYear();
 }

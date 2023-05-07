@@ -7,8 +7,10 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.xuecheng.base.exception.XueChengPlusException;
+import com.xuecheng.base.model.ResultResponse;
 import com.xuecheng.orders.config.AlipayConfig;
 import com.xuecheng.orders.model.dto.AddOrderDto;
+import com.xuecheng.orders.model.dto.CompareWithLastYear;
 import com.xuecheng.orders.model.dto.PayRecordDto;
 import com.xuecheng.orders.model.dto.PayStatusDto;
 import com.xuecheng.orders.model.po.XcPayRecord;
@@ -104,5 +106,11 @@ public class OrderController {
         PayRecordDto payRecordDto = orderService.queryPayResult(payNo);
 
         return payRecordDto;
+    }
+
+    @GetMapping("/compareWithLastYear")
+    @ResponseBody
+    public ResultResponse<CompareWithLastYear> compare(){
+        return orderService.compareWithLastYear();
     }
 }

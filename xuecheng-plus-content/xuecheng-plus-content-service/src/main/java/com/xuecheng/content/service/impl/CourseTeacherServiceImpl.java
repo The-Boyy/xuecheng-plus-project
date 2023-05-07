@@ -2,9 +2,12 @@ package com.xuecheng.content.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xuecheng.base.exception.XueChengPlusException;
+import com.xuecheng.base.model.ResultResponse;
 import com.xuecheng.content.mapper.CourseTeacherMapper;
 import com.xuecheng.content.model.dto.AddCourseTeacherDto;
+import com.xuecheng.content.model.dto.CompareWithLastYear;
 import com.xuecheng.content.model.dto.CourseTeacherDto;
+import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.model.po.CourseTeacher;
 import com.xuecheng.content.service.CourseTeacherService;
 import org.springframework.beans.BeanUtils;
@@ -14,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CourseTeacherServiceImpl implements CourseTeacherService {
@@ -83,5 +88,38 @@ public class CourseTeacherServiceImpl implements CourseTeacherService {
     public void deleteCourseTeachers(Long courseId) {
         LambdaQueryWrapper<CourseTeacher> eq = new LambdaQueryWrapper<CourseTeacher>().eq(CourseTeacher::getCourseId, courseId);
         courseTeacherMapper.delete(eq);
+    }
+
+    @Override
+    public ResultResponse<CompareWithLastYear> compareWithLastYear() {
+        LambdaQueryWrapper<CourseTeacher> wrapper = new LambdaQueryWrapper<CourseTeacher>().orderByDesc(CourseTeacher::getCreateDate);
+
+        List<CourseTeacher> courseTeachers = courseTeacherMapper.selectList(wrapper);
+
+        Map<Integer, Integer> map = new HashMap<>();
+
+        int year = LocalDateTime.now().getYear();
+        map.put(year, 0);
+        map.put(year - 1, 0);
+
+        for (CourseTeacher courseTeacher : courseTeachers) {
+            int y = courseTeacher.getCreateDate().getYear();
+            if(map.containsKey(y)){
+                map.put(y, map.get(y) + 1);
+            }else {
+                break;
+            }
+        }
+
+        CompareWithLastYear compareWithLastYear = new CompareWithLastYear();
+        compareWithLastYear.setDate(year + "年");
+
+        Integer curNum = map.get(year);
+        Integer lastNum = map.get(year - 1);
+        compareWithLastYear.setFlag(curNum >= lastNum);
+
+        compareWithLastYear.setRate((curNum - lastNum) / (lastNum + 0.000001) * 100);
+
+        return ResultResponse.success(200, compareWithLastYear);
     }
 }
