@@ -10,4 +10,7 @@ public class QueryUserParamsDto {
     private String username;
     private String nickname;
     private String status;
+    private String sex;
+    private String qq;
+    private String email;
 }

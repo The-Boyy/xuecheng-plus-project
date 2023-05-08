@@ -1,6 +1,7 @@
 package com.xuecheng.user.api;
 
 import com.xuecheng.user.model.dto.QueryUserParamsDto;
+import com.xuecheng.user.model.dto.UserInfoDto;
 import com.xuecheng.user.model.po.XcUser;
 import com.xuecheng.user.service.UserBaseInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class UserBaseInfoController {
     }
 
     @PostMapping("/list")
-    public PageResult<XcUser> list(PageParams pageParams, @RequestBody(required = false) QueryUserParamsDto queryUserParamsDto){
+    public PageResult<UserInfoDto> list(PageParams pageParams, @RequestBody(required = false) QueryUserParamsDto queryUserParamsDto){
         return userBaseInfoService.queryUserBaseList(pageParams, queryUserParamsDto);
     }
 }
