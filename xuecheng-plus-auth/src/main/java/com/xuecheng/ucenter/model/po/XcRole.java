@@ -17,9 +17,7 @@ import java.time.LocalDateTime;
 @TableName("xc_role")
 public class XcRole implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
-    private String id;
+    private Long id;
 
     private String roleName;
 
@@ -32,6 +30,4 @@ public class XcRole implements Serializable {
     private LocalDateTime updateTime;
 
     private String status;
-
-
 }

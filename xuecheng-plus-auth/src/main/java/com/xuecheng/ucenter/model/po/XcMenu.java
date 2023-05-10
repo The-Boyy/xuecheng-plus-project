@@ -1,5 +1,7 @@
 package com.xuecheng.ucenter.model.po;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -17,52 +19,26 @@ import java.time.LocalDateTime;
 @TableName("xc_menu")
 public class XcMenu implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
-    private String id;
+    private String name;
 
-    /**
-     * 菜单编码
-     */
     private String code;
 
-    /**
-     * 父菜单ID
-     */
-    private String pId;
+    private Long parentId;
 
-    /**
-     * 名称
-     */
-    private String menuName;
+    private Integer grade;
 
-    /**
-     * 请求地址
-     */
-    private String url;
+    private LocalDateTime createDate;
 
-    /**
-     * 是否是菜单
-     */
-    private String isMenu;
+    private LocalDateTime updateDate;
 
-    /**
-     * 菜单层级
-     */
-    private Integer level;
+    private Integer status;
 
-    /**
-     * 菜单排序
-     */
-    private Integer sort;
+    private String path;
 
-    private String status;
+    private String description;
 
     private String icon;
-
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
-
-
 }

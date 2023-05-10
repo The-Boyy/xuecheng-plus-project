@@ -19,13 +19,11 @@ public class XcPermission implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String id;
+    private Long id;
 
-    private String roleId;
+    private Long roleId;
 
-    private String menuId;
+    private Long menuId;
 
     private LocalDateTime createTime;
-
-
 }

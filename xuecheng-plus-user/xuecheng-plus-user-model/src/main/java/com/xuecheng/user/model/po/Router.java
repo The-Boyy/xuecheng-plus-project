@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class Router {
 
-    Integer id;
+    Long id;
     String path;
     String name;
     String meta;

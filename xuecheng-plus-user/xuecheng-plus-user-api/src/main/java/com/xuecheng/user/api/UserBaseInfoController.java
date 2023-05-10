@@ -15,7 +15,6 @@ import com.xuecheng.base.model.PageResult;
 
 
 @RestController
-@PreAuthorize("hasAuthority('super_admin')")
 public class UserBaseInfoController {
 
     @Autowired

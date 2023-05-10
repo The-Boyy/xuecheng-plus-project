@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class MenuResultDto {
 
-    private List<ManagementDto> managementDtoList;
+    private List<MenuDto> menuDtoList;
 
     private RouterReturnDto routerReturnDto;
 

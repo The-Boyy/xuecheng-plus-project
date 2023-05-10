@@ -2,18 +2,20 @@ package com.xuecheng.user.api;
 
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.ResultResponse;
+import com.xuecheng.user.model.dto.MenuDto;
 import com.xuecheng.user.model.dto.MenuResultDto;
+import com.xuecheng.user.model.dto.PermissionsDto;
 import com.xuecheng.user.model.dto.XcUserDto;
 import com.xuecheng.user.service.MenuService;
 import com.xuecheng.user.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
-@PreAuthorize("hasAuthority('super_admin')")
 public class MenuController {
 
     @Autowired
@@ -45,4 +47,8 @@ public class MenuController {
 
         return ResultResponse.success(200, menuResultDto);
     }
+
+
+
+
 }

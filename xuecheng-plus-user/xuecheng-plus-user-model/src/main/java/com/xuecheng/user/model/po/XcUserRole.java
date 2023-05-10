@@ -23,7 +23,7 @@ public class XcUserRole implements Serializable {
 
     private String userId;
 
-    private String roleId;
+    private Long roleId;
 
     private LocalDateTime createTime;
 

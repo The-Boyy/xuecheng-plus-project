@@ -50,9 +50,6 @@ public class CourseCategoryServiceImpl implements CourseCategoryService {
                 //到每个节点的子节点放在父节点的childrenTreeNodes属性中
                 courseCategoryParent.getChildrenTreeNodes().add(item);
             }
-
-
-
         });
 
         return courseCategoryList;

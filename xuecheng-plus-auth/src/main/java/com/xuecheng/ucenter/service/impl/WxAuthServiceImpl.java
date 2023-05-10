@@ -102,7 +102,7 @@ public class WxAuthServiceImpl implements AuthService, WxAuthService {
         XcUserRole xcUserRole = new XcUserRole();
         xcUserRole.setId(UUID.randomUUID().toString());
         xcUserRole.setUserId(xcUser.getId());
-        xcUserRole.setRoleId("17");
+        xcUserRole.setRoleId(17L);
         xcUserRole.setCreateTime(LocalDateTime.now());
         xcUserRoleMapper.insert(xcUserRole);
 

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuecheng.user.mapper.PermissionMapper">
+
+    <delete id="deletePermissionByIds">
+        delete from xc_permission where role_id = #{roleId} and menu_id in
+        <foreach collection="deletePermissionIds" item="menu_id" open="(" close=")" separator=",">
+            #{menu_id}
+        </foreach>
+    </delete>
+
+    <select id="queryPermissions" parameterType="long" resultType="com.xuecheng.user.model.dto.PermissionsDto">
+        select * from xc_menu
+        <where>
+            <if test="roleId != null and roleId != ''">
+                id in(select menu_id from xc_permission where role_id = #{roleId})
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertBatch" parameterType="com.xuecheng.user.model.po.XcPermission">
+        insert into xc_permission(role_id, menu_id, create_time)
+        values 
+            <foreach collection="xcPermissionList" item="xcPermission" index="index" separator=",">
+                (
+                 #{xcPermission.roleId},
+                 #{xcPermission.menuId},
+                 #{xcPermission.createTime}
+                )
+            </foreach>
+    </insert>
+</mapper>
