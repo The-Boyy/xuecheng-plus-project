@@ -1,6 +1,7 @@
 package com.xuecheng.media.api;
 
 import com.baomidou.mybatisplus.extension.api.R;
+import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.ResultResponse;
 import com.xuecheng.media.model.dto.CompareWithLastYear;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
@@ -8,6 +9,7 @@ import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
 import com.xuecheng.media.service.MediaFileService;
+import com.xuecheng.media.util.SecurityUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,14 @@ public class MediaFilesController {
     @RequestMapping(value = "/upload/coursefile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public UploadFileResultDto upload(@RequestPart("filedata") MultipartFile file, @RequestParam(value = "objectName", required = false) String objectName) throws Exception {
 
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+
+        if(user == null){
+            XueChengPlusException.cast("用户未登录");
+        }
+
+        Long companyId = Long.valueOf(user.getCompanyId());
+
         UploadFileParamsDto dto = new UploadFileParamsDto();
         dto.setFilename(file.getOriginalFilename());
         dto.setFileSize(file.getSize());
@@ -62,13 +72,11 @@ public class MediaFilesController {
         File tempFile = File.createTempFile("minio", ".temp");
         //transferTo:将内存文件存入磁盘中
         file.transferTo(tempFile);
-        Long companyId = 1232141425L;
 
         String absolutePath = tempFile.getAbsolutePath();
 
         return mediaFileService.uploadFile(companyId, dto, absolutePath, objectName);
     }
-
 
     @GetMapping("/file/compareWithLastYear")
     public ResultResponse<CompareWithLastYear> compareWithLastYear(){

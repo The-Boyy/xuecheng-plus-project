@@ -1,6 +1,7 @@
 package com.xuecheng.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.PageParams;
@@ -8,12 +9,14 @@ import com.xuecheng.base.model.PageResult;
 import com.xuecheng.base.model.ResultResponse;
 import com.xuecheng.user.mapper.PermissionMapper;
 import com.xuecheng.user.mapper.RoleMapper;
+import com.xuecheng.user.mapper.UserRoleMapper;
 import com.xuecheng.user.model.dto.PermissionsDto;
 import com.xuecheng.user.model.dto.QueryRoleParamsDto;
 import com.xuecheng.user.model.dto.RoleDto;
 import com.xuecheng.user.model.po.XcMenu;
 import com.xuecheng.user.model.po.XcPermission;
 import com.xuecheng.user.model.po.XcRole;
+import com.xuecheng.user.model.po.XcUserRole;
 import com.xuecheng.user.service.RoleService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -33,6 +36,10 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     PermissionMapper permissionMapper;
+
+    @Autowired
+    UserRoleMapper userRoleMapper;
+
     @Override
     public PageResult<RoleDto> queryList(PageParams pageParams, QueryRoleParamsDto queryRoleParamsDto) {
 
@@ -140,5 +147,101 @@ public class RoleServiceImpl implements RoleService {
         }
 
         return null;
+    }
+
+    @Override
+    public ResultResponse<List<RoleDto>> queryRoleNameList() {
+
+        return ResultResponse.success(200, roleMapper.queryRoleNameList());
+    }
+
+    @Override
+    @Transactional
+    public ResultResponse<XcRole> increaseRole(XcRole role) {
+
+        if(role.getRoleName() == null || "".equals(role.getRoleName()) || role.getRoleCode() == null || "".equals(role.getRoleCode())){
+            XueChengPlusException.cast("新增角色失败，信息不完整");
+        }
+        XcRole xcRole = roleMapper.selectOne(new LambdaQueryWrapper<XcRole>().eq(XcRole::getRoleName, role.getRoleName()));
+        if(xcRole != null){
+            XueChengPlusException.cast("角色名已存在，不可重复添加");
+        }
+        if(role.getDescription() == null || "".equals(role.getDescription())){
+            role.setDescription(role.getRoleName());
+        }
+        role.setCreateTime(LocalDateTime.now());
+        role.setUpdateTime(LocalDateTime.now());
+        role.setStatus("1");
+
+        int insert = roleMapper.insert(role);
+        if(insert <= 0){
+            XueChengPlusException.cast("新增角色失败");
+        }
+        return ResultResponse.success(200, role);
+    }
+
+    @Override
+    @Transactional
+    public ResultResponse<?> deleteRoleById(String roleId) {
+
+        Long id = Long.parseLong(roleId);
+
+        XcRole xcRole = roleMapper.selectById(id);
+        if(xcRole == null){
+            XueChengPlusException.cast("角色不存在");
+        }
+
+        LambdaQueryWrapper<XcUserRole> wrapper = new LambdaQueryWrapper<XcUserRole>().eq(XcUserRole::getRoleId, id);
+
+        List<XcUserRole> xcUserRoles = userRoleMapper.selectList(wrapper);
+        if(xcUserRoles.size() != 0){
+            int delete = userRoleMapper.delete(wrapper);
+            if(delete <= 0){
+                XueChengPlusException.cast("删除角色与用户关联信息失败");
+            }
+        }
+
+        LambdaQueryWrapper<XcPermission> eq = new LambdaQueryWrapper<XcPermission>().eq(XcPermission::getRoleId, id);
+        List<XcPermission> xcPermissionList = permissionMapper.selectList(eq);
+        if(xcPermissionList.size() != 0){
+            int delete = permissionMapper.delete(eq);
+            if(delete <= 0){
+                XueChengPlusException.cast("删除角色与权限管理信息失败");
+            }
+        }
+
+        int i = roleMapper.deleteById(id);
+        if(i <= 0){
+            XueChengPlusException.cast("删除角色失败");
+        }
+
+        return ResultResponse.success(200, null);
+    }
+
+    @Override
+    @Transactional
+    public ResultResponse<XcRole> updateRole(XcRole role) {
+
+        Long id = role.getId();
+
+        XcRole xcRole = roleMapper.selectById(id);
+        if(xcRole == null){
+            XueChengPlusException.cast("角色不存在");
+        }
+
+        String roleName = role.getRoleName();
+        String roleCode = role.getRoleCode();
+        if(roleName == null || roleCode == null || "".equals(roleName) || "".equals(roleCode)){
+            XueChengPlusException.cast("角色信息不完整");
+        }
+
+        role.setUpdateTime(LocalDateTime.now());
+
+        int i = roleMapper.updateById(role);
+
+        if(i <= 0){
+            XueChengPlusException.cast("更新角色信息失败");
+        }
+        return ResultResponse.success(200, xcRole);
     }
 }
