@@ -19,4 +19,6 @@ public interface UserService {
     ResultResponse<XcUser> userUpdate(UserUpdateDto userUpdateDto, String username);
 
     ResultResponse<?> deleteUserById(String userId);
+
+    String queryCompanyNameById(String companyId);
 }

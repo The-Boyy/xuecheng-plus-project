@@ -24,4 +24,6 @@ public interface RoleService {
     ResultResponse<?> deleteRoleById(String roleId);
 
     ResultResponse<XcRole> updateRole(XcRole role);
+
+    ResultResponse<XcRole> findRoleById(String roleId);
 }

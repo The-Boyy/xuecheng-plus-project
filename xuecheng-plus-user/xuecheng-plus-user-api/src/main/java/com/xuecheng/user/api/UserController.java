@@ -57,4 +57,9 @@ public class UserController {
     public ResultResponse<?> deleteUserById(String userId){
         return userService.deleteUserById(userId);
     }
+
+    @GetMapping("/queryCompanyNameById")
+    public String queryCompanyNameById(String companyId){
+        return userService.queryCompanyNameById(companyId);
+    }
 }

@@ -1,10 +1,12 @@
 package com.xuecheng.content.api;
 
+import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.ResultResponse;
 import com.xuecheng.content.model.dto.CompareWithLastYear;
 import com.xuecheng.content.model.dto.CoursePreviewDto;
 import com.xuecheng.content.model.po.CoursePublish;
 import com.xuecheng.content.service.CoursePublishService;
+import com.xuecheng.content.util.SecurityUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,7 +43,11 @@ public class CoursePublishController {
     @ResponseBody
     @PostMapping("/courseaudit/commit/{courseId}")
     public void commitAudit(@PathVariable("courseId") Long courseId){
-        Long companyId = 1232141425L;
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        if(user == null){
+            XueChengPlusException.cast("用户为登录或者登录过期");
+        }
+        Long companyId = Long.valueOf(user.getCompanyId());
         coursePublishService.commitAudit(companyId, courseId);
     }
 
@@ -49,7 +55,11 @@ public class CoursePublishController {
     @ResponseBody
     @PostMapping ("/coursepublish/{courseId}")
     public void coursepublish(@PathVariable("courseId") Long courseId){
-        Long companyId = 1232141425L;
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        if(user == null){
+            XueChengPlusException.cast("用户为登录或者登录过期");
+        }
+        Long companyId = Long.valueOf(user.getCompanyId());
         coursePublishService.publish(companyId, courseId);
     }
 

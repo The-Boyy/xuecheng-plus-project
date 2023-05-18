@@ -244,4 +244,15 @@ public class RoleServiceImpl implements RoleService {
         }
         return ResultResponse.success(200, xcRole);
     }
+
+    @Override
+    public ResultResponse<XcRole> findRoleById(String roleId) {
+
+        XcRole xcRole = roleMapper.selectById(Long.parseLong(roleId));
+        if(xcRole == null){
+            XueChengPlusException.cast("角色不存在");
+        }
+
+        return ResultResponse.success(200, xcRole);
+    }
 }

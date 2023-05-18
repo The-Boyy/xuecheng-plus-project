@@ -10,10 +10,7 @@ import com.xuecheng.base.model.ResultResponse;
 import com.xuecheng.base.utils.UUIDUtil;
 import com.xuecheng.user.mapper.UserMapper;
 import com.xuecheng.user.mapper.UserRoleMapper;
-import com.xuecheng.user.model.dto.QueryUserParamsDto;
-import com.xuecheng.user.model.dto.UserInfoDto;
-import com.xuecheng.user.model.dto.UserRegisterDto;
-import com.xuecheng.user.model.dto.UserUpdateDto;
+import com.xuecheng.user.model.dto.*;
 import com.xuecheng.user.model.po.XcUser;
 import com.xuecheng.user.model.po.XcUserRole;
 import com.xuecheng.user.service.UserService;
@@ -25,9 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -65,9 +61,27 @@ public class UserServiceImpl implements UserService {
 
         List<UserInfoDto> userInfoDtoList = new ArrayList<>();
 
+        String[] userIds = new String[users.size()];
+
+        for(int i = 0; i < users.size(); i++){
+            userIds[i] = users.get(i).getId();
+        }
+
+        List<UserIdWithRoleNameDto> roleNamesByUserIds = userMapper.getRoleNamesByUserIds(userIds);
+
+        Map<String, String> map = new HashMap<>();
+        for (UserIdWithRoleNameDto roleNamesByUserId : roleNamesByUserIds) {
+            if(roleNamesByUserId.getRoleName() != null){
+                map.put(roleNamesByUserId.getUserId(), roleNamesByUserId.getRoleName());
+            }else {
+                map.put(roleNamesByUserId.getUserId(), null);
+            }
+        }
+
         for (XcUser user : users) {
             UserInfoDto userInfoDto = new UserInfoDto();
             BeanUtils.copyProperties(user, userInfoDto);
+            userInfoDto.setRoleName(map.get(user.getId()));
             userInfoDtoList.add(userInfoDto);
         }
 
@@ -234,5 +248,11 @@ public class UserServiceImpl implements UserService {
         }
 
         return ResultResponse.success(200, null);
+    }
+
+    @Override
+    public String queryCompanyNameById(String companyId) {
+
+        return userMapper.queryCompanyNameById(companyId);
     }
 }

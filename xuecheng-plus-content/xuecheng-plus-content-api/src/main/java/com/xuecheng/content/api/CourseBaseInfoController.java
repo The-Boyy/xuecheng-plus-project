@@ -103,4 +103,40 @@ public class CourseBaseInfoController {
     public ResultResponse<CompareWithLastYear> compareWithLastYear(){
         return courseBaseInfoService.compareWithLastYear();
     }
+
+    @PostMapping("/course/adminList")
+    public PageResult<AdminCourseInfoDto> AdminCourseList(@ModelAttribute PageParams pageParams, @RequestParam(value = "auditFlag", required = false) Boolean auditFlag, @RequestBody(required = false) QueryCourseParamsDto queryCourseParamsDto){
+
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        if(user == null){
+            XueChengPlusException.cast("用户未登录或登录失效");
+        }
+
+        return courseBaseInfoService.queryAdminCourseBaseList(pageParams, queryCourseParamsDto, auditFlag);
+    }
+
+    @PostMapping("/course/updateCourseBase")
+    public ResultResponse<UpdateCourseBaseDto> updateById(@RequestBody UpdateCourseBaseDto dto){
+
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+
+        if(user == null){
+            XueChengPlusException.cast("用户未登录或者登录失效");
+        }
+
+        return courseBaseInfoService.adminUpdateCourseBase(user.getUsername(), dto);
+    }
+
+    @DeleteMapping("/course/deleteCourseById")
+    public ResultResponse<?> deleteCourse(String id){
+
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        if(user == null){
+            XueChengPlusException.cast("用户未登录或者登录失效");
+        }
+
+        courseBaseInfoService.deleteCourseById(Long.parseLong(id));
+
+        return ResultResponse.success(200, null);
+    }
 }

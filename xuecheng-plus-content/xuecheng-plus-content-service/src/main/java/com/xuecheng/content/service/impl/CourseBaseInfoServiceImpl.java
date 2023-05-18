@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +58,9 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
     @Autowired
     CoursePublishService coursePublishService;
+
+    @Value("${minio.address}")
+    String MINIO_ADDRESS;
 
     @Override
     public PageResult<CourseBase> queryCourseBaseList(Long companyId, PageParams pageParams, QueryCourseParamsDto courseParamsDto) {
@@ -306,13 +310,85 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         return ResultResponse.success(200, compareWithLastYear);
     }
 
+    @Override
+    public PageResult<AdminCourseInfoDto> queryAdminCourseBaseList(PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto, Boolean auditFlag) {
+
+        LambdaQueryWrapper<CourseBase> wrapper = new LambdaQueryWrapper<>();
+
+        if(queryCourseParamsDto != null){
+            wrapper.like(StringUtils.isNotEmpty(queryCourseParamsDto.getCourseName()), CourseBase::getName, queryCourseParamsDto.getCourseName());
+            wrapper.eq(StringUtils.isNotEmpty(queryCourseParamsDto.getAuditStatus()), CourseBase::getAuditStatus, queryCourseParamsDto.getAuditStatus());
+            wrapper.eq(StringUtils.isNotEmpty(queryCourseParamsDto.getPublishStatus()), CourseBase::getStatus, queryCourseParamsDto.getPublishStatus());
+        }
+
+        if(auditFlag != null && auditFlag){
+            wrapper.eq(CourseBase::getAuditStatus, "202003");
+        }
+
+        Page<CourseBase> page = new Page<>(pageParams.getPageNo(), pageParams.getPageSize());
+        Page<CourseBase> courseBasePage = courseBaseMapper.selectPage(page, wrapper);
+        List<CourseBase> courses = courseBasePage.getRecords();
+        List<CourseMarket> courseMarkets = courseMarketMapper.selectList(new LambdaQueryWrapper<>());
+        Map<Long, CourseMarket> map = new HashMap<>();
+        for (CourseMarket courseMarket : courseMarkets) {
+            map.put(courseMarket.getId(), courseMarket);
+        }
+
+        List<AdminCourseInfoDto> results = new ArrayList<>();
+        for (CourseBase course : courses) {
+            AdminCourseInfoDto result = new AdminCourseInfoDto();
+            BeanUtils.copyProperties(course, result);
+            result.setMaxCategory(courseCategoryMapper.selectNameById(result.getMt()));
+            result.setMinCategory(courseCategoryMapper.selectNameById(result.getSt()));
+            Long courseId = course.getId();
+            if(map.get(courseId) != null){
+                BeanUtils.copyProperties(map.get(courseId), result);
+            }
+            results.add(result);
+        }
+
+        int total = (int) courseBasePage.getTotal();
+
+        return new PageResult<>(results, total, pageParams.getPageNo(), pageParams.getPageSize());
+    }
+
+    @Override
+    public ResultResponse<UpdateCourseBaseDto> adminUpdateCourseBase(String username, UpdateCourseBaseDto dto) {
+
+        String courseId = dto.getId();
+
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        if(courseBase == null){
+            XueChengPlusException.cast("课程不存在");
+        }
+
+        BeanUtils.copyProperties(dto, courseBase);
+        courseBase.setChangePeople(username);
+        courseBase.setChangeDate(LocalDateTime.now());
+        String pic = dto.getPic();
+        if(!(pic == null || "".equals(pic))){
+            courseBase.setPic(MINIO_ADDRESS + dto.getPic());
+        }
+
+        int i = courseBaseMapper.updateById(courseBase);
+        if(i <= 0){
+            XueChengPlusException.cast("修改课程信息失败");
+        }
+
+        CourseMarket courseMarket = new CourseMarket();
+        BeanUtils.copyProperties(dto, courseMarket);
+        courseMarket.setId(Long.valueOf(courseId));
+        saveCourseMarket(courseMarket);
+        return ResultResponse.success(200, dto);
+    }
+
     //单独写一个方法保存营销信息，逻辑：存在则更新，不存在则添加
     private int saveCourseMarket(CourseMarket courseMarketNew){
 
         //参数的合法性校验
         String charge = courseMarketNew.getCharge();
         if(StringUtils.isEmpty(charge)){
-            throw new RuntimeException("收费规则为空");
+            XueChengPlusException.cast("收费规则为空");
         }
         //如果课程收费，价格没有填写也需要抛出异常
         if(charge.equals("201001")){

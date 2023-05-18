@@ -32,4 +32,6 @@ public class UserInfoDto {
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
+
+    private String roleName;
 }

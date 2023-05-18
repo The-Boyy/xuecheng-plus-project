@@ -3,10 +3,7 @@ package com.xuecheng.media.api;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.ResultResponse;
-import com.xuecheng.media.model.dto.CompareWithLastYear;
-import com.xuecheng.media.model.dto.QueryMediaParamsDto;
-import com.xuecheng.media.model.dto.UploadFileParamsDto;
-import com.xuecheng.media.model.dto.UploadFileResultDto;
+import com.xuecheng.media.model.dto.*;
 import com.xuecheng.media.model.po.MediaFiles;
 import com.xuecheng.media.service.MediaFileService;
 import com.xuecheng.media.util.SecurityUtil;
@@ -14,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
@@ -45,9 +43,24 @@ public class MediaFilesController {
     @ApiOperation("媒资列表查询接口")
     @PostMapping("/files")
     public PageResult<MediaFiles> list(PageParams pageParams, @RequestBody QueryMediaParamsDto queryMediaParamsDto) {
-        Long companyId = 1232141425L;
-        return mediaFileService.queryMediaFiels(companyId, pageParams, queryMediaParamsDto);
 
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        if(user == null){
+            XueChengPlusException.cast("用户未登录");
+        }
+        Long companyId = Long.parseLong(user.getCompanyId());
+        return mediaFileService.queryMediaFiels(companyId, pageParams, queryMediaParamsDto);
+    }
+
+//    @PreAuthorize("hasAnyAuthority('media_admin')")
+    @PostMapping("/files/all")
+    @PreAuthorize("hasAnyAuthority('media_admin')")
+    public PageResult<MediaFiles> mediaList(PageParams pageParams, @RequestBody(required = false) QueryMediaParamsDto queryMediaParamsDto){
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        if(user == null){
+            XueChengPlusException.cast("用户未登录");
+        }
+        return mediaFileService.queryMediaFiels(null, pageParams, queryMediaParamsDto);
     }
 
     @ApiOperation("上传图片")
@@ -61,6 +74,7 @@ public class MediaFilesController {
         }
 
         Long companyId = Long.valueOf(user.getCompanyId());
+        String username = user.getUsername();
 
         UploadFileParamsDto dto = new UploadFileParamsDto();
         dto.setFilename(file.getOriginalFilename());
@@ -68,6 +82,7 @@ public class MediaFilesController {
         //图片资源
         dto.setFileType("001001");
         dto.setTags("图片资源");
+        dto.setUsername(username);
 
         File tempFile = File.createTempFile("minio", ".temp");
         //transferTo:将内存文件存入磁盘中
@@ -81,5 +96,32 @@ public class MediaFilesController {
     @GetMapping("/file/compareWithLastYear")
     public ResultResponse<CompareWithLastYear> compareWithLastYear(){
         return mediaFileService.compareWithLastYear();
+    }
+
+    @GetMapping("/test")
+    public String testtest(){
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+
+        if(user == null){
+            XueChengPlusException.cast("用户未登录");
+        }
+        Long companyId = Long.valueOf(user.getCompanyId());
+        return mediaFileService.testtest(companyId);
+    }
+
+    @DeleteMapping("/deleteFileById")
+    public ResultResponse<?> deleteFileById(String fileId){
+
+        return mediaFileService.deleteFileById(fileId);
+    }
+
+    @GetMapping("/selectFileById")
+    public ResultResponse<MediaFiles> selectFileById(String fileId){
+        return mediaFileService.selectFileById(fileId);
+    }
+
+    @PostMapping("/auditFileById")
+    public ResultResponse<MediaFiles> auditFileById(@RequestBody AuditMediaFileDto auditMediaFileDto){
+        return mediaFileService.auditFileById(auditMediaFileDto);
     }
 }

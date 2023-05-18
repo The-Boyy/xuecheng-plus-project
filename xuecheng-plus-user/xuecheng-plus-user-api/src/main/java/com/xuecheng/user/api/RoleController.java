@@ -56,4 +56,9 @@ public class RoleController {
     public ResultResponse<XcRole> updateRole(@RequestBody XcRole role){
         return roleService.updateRole(role);
     }
+
+    @GetMapping("/findRoleById")
+    public ResultResponse<XcRole> findRoleById(String roleId){
+        return roleService.findRoleById(roleId);
+    }
 }

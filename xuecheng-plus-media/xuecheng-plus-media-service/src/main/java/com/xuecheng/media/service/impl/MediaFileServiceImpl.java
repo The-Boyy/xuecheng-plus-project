@@ -9,15 +9,12 @@ import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.base.model.ResultResponse;
 import com.xuecheng.media.mapper.MediaFilesMapper;
 import com.xuecheng.media.mapper.MediaProcessMapper;
-import com.xuecheng.media.model.dto.CompareWithLastYear;
-import com.xuecheng.media.model.dto.QueryMediaParamsDto;
-import com.xuecheng.media.model.dto.UploadFileParamsDto;
-import com.xuecheng.media.model.dto.UploadFileResultDto;
+import com.xuecheng.media.model.dto.*;
 import com.xuecheng.media.model.po.MediaFiles;
 import com.xuecheng.media.model.po.MediaProcess;
 import com.xuecheng.media.service.MediaFileService;
+import com.xuecheng.media.feignclient.UserServiceClient;
 import io.minio.*;
-import io.minio.errors.*;
 import io.minio.messages.DeleteError;
 import io.minio.messages.DeleteObject;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +31,6 @@ import com.xuecheng.base.model.PageResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -62,6 +57,9 @@ public class MediaFileServiceImpl implements MediaFileService {
     MinioClient minioClient;
 
     @Autowired
+    UserServiceClient userServiceClient;
+
+    @Autowired
     MediaFileService currentProxy;
 
     @Value("${minio.bucket.files}")
@@ -78,8 +76,12 @@ public class MediaFileServiceImpl implements MediaFileService {
     @Override
     public PageResult<MediaFiles> queryMediaFiels(Long companyId, PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto) {
 
-        //构建查询条件对象
-        LambdaQueryWrapper<MediaFiles> queryWrapper = new LambdaQueryWrapper<MediaFiles>().eq(MediaFiles::getCompanyId, companyId);
+        LambdaQueryWrapper<MediaFiles> queryWrapper;
+        if(companyId != null){
+            queryWrapper = new LambdaQueryWrapper<MediaFiles>().eq(MediaFiles::getCompanyId, companyId).orderByDesc(MediaFiles::getCreateDate);
+        }else {
+            queryWrapper = new LambdaQueryWrapper<MediaFiles>().orderByDesc(MediaFiles::getCreateDate);
+        }
 
         //分页对象
         Page<MediaFiles> page = new Page<>(pageParams.getPageNo(), pageParams.getPageSize());
@@ -202,6 +204,7 @@ public class MediaFileServiceImpl implements MediaFileService {
             mediaFiles.setAuditStatus("002003");
             mediaFiles.setStatus("1");
             mediaFiles.setChangeDate(LocalDateTime.now());
+            mediaFiles.setCompanyName(userServiceClient.queryCompanyNameById(String.valueOf(companyId)));
             //保存文件信息到文件表
             int insert = mediaFilesMapper.insert(mediaFiles);
             if (insert < 0) {
@@ -374,6 +377,58 @@ public class MediaFileServiceImpl implements MediaFileService {
         compareWithLastYear.setRate((curNum - lastNum) / (lastNum + 0.000001) * 100);
 
         return ResultResponse.success(200, compareWithLastYear);
+    }
+
+    @Override
+    public String testtest(Long companyId) {
+
+        String id = String.valueOf(companyId);
+        String s = userServiceClient.queryCompanyNameById(id);
+        return s;
+    }
+
+    @Override
+    @Transactional
+    public ResultResponse<?> deleteFileById(String fileId) {
+
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(fileId);
+        if(mediaFiles == null){
+            XueChengPlusException.cast("文件不存在");
+        }
+        int i = mediaFilesMapper.deleteById(fileId);
+        if(i <= 0){
+            XueChengPlusException.cast("删除失败，请重试");
+        }
+        return ResultResponse.success(200, null);
+    }
+
+    @Override
+    public ResultResponse<MediaFiles> selectFileById(String fileId) {
+        return ResultResponse.success(200, mediaFilesMapper.selectById(fileId));
+    }
+
+    @Override
+    public ResultResponse<MediaFiles> auditFileById(AuditMediaFileDto auditMediaFileDto) {
+
+        MediaFiles mediaFiles = mediaFilesMapper.selectById(auditMediaFileDto.getId());
+        if(mediaFiles == null){
+            XueChengPlusException.cast("文件不存在");
+        }
+        String auditStatus = auditMediaFileDto.getAuditStatus();
+        if(auditStatus == null || "".equals(auditStatus)){
+            XueChengPlusException.cast("审核结果不能为空");
+        }
+        if(!("002003".equals(auditStatus) || "002001".equals(auditStatus) || "002002".equals(auditStatus))){
+            XueChengPlusException.cast("审核状态错误");
+        }
+        mediaFiles.setAuditStatus(auditStatus);
+        mediaFiles.setAuditMind(auditMediaFileDto.getAuditMind());
+
+        int i = mediaFilesMapper.updateById(mediaFiles);
+        if(i <= 0){
+            XueChengPlusException.cast("审核失败");
+        }
+        return ResultResponse.success(200, mediaFiles);
     }
 
     /**

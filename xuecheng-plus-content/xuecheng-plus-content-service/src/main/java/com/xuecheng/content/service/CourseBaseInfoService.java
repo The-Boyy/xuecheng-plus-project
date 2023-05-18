@@ -55,4 +55,8 @@ public interface CourseBaseInfoService {
     ResultResponse<List<CategoryWithCountDto>> queryCategoryWithCount();
 
     ResultResponse<CompareWithLastYear> compareWithLastYear();
+
+    PageResult<AdminCourseInfoDto> queryAdminCourseBaseList(PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto, Boolean auditFlag);
+
+    ResultResponse<UpdateCourseBaseDto> adminUpdateCourseBase(String username, UpdateCourseBaseDto dto);
 }
